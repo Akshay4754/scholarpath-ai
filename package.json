@@ -1,0 +1,11 @@
+{
+  "name": "scholarpath-ai",
+  "private": true,
+  "description": "Builds the frontend and runs the API that serves it, for hosts that deploy from the repository root without Docker.",
+  "scripts": {
+    "build": "npm ci --prefix frontend && npm run build --prefix frontend && npm ci --omit=dev --prefix backend",
+    "start": "node backend/src/server.js",
+    "test": "npm test --prefix backend"
+  },
+  "engines": { "node": ">=20" }
+}

@@ -1,0 +1,15 @@
+**/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+**/dist
+backend/uploads
+backend/test
+docs
+.git
+.gitignore
+*.md
+Dockerfile
+docker-compose.yml
+render.yaml

@@ -1,0 +1,34 @@
+# Self-hosted stack: the app plus MongoDB with a persistent volume.
+#   ADMIN_API_TOKEN=$(openssl rand -hex 32) docker compose up -d --build
+# Then open http://localhost:4000. Optional keys (GEMINI_API_KEY, PINECONE_API_KEY, SMTP_*) can be exported the same way.
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-4000}:4000"
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/scholarpath
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost:4000}
+      TRUST_PROXY: ${TRUST_PROXY:-0}
+      ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      PINECONE_API_KEY: ${PINECONE_API_KEY:-}
+      PINECONE_INDEX_NAME: ${PINECONE_INDEX_NAME:-scholarpath-index}
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mongo-data:
